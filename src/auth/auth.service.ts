@@ -28,11 +28,16 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = await this.jwt.signAsync({
-      id: user.id,
-      email: user.email,
-      secret: this.config.get<string>('JWT_SECRET'),
-    });
+    const token = await this.jwt.signAsync(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      {
+        expiresIn: '15m',
+        secret: this.config.getOrThrow<string>('JWT_SECRET'),
+      },
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = user;
